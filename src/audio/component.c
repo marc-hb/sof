@@ -35,7 +35,7 @@ static const struct comp_driver *get_drv(struct sof_ipc_comp *comp)
 	struct list_item *clist;
 	const struct comp_driver *drv = NULL;
 	struct comp_driver_info *info;
-	struct sof_ipc_comp_new_ext *comp_ext;
+	struct sof_ipc_comp_ext_data *comp_ext;
 	uint32_t flags;
 
 	irq_local_disable(flags);
@@ -44,14 +44,18 @@ static const struct comp_driver *get_drv(struct sof_ipc_comp *comp)
 	if (!comp->ext_data_length)
 		goto comp_type_match;
 
-	/* validate the hdr.size */
-	if (comp->hdr.size < comp->ext_data_length) {
-		tr_err(&comp_tr, "Invalid size, hdr.size:0x%x, ext_data_length:0x%x\n",
+	/* Basic sanity check of the total size and extended data
+	 * length. A bit lax because in this generic code we don't know
+	 * which derived comp we have and how much its specific members
+	 * add.
+	 */
+	if (comp->hdr.size < sizeof(*comp) + comp->ext_data_length) {
+		tr_err(&comp_tr, "Invalid size, hdr.size=0x%x, ext_data_length=0x%x\n",
 		       comp->hdr.size, comp->ext_data_length);
 		goto out;
 	}
 
-	comp_ext = (struct sof_ipc_comp_new_ext *)
+	comp_ext = (struct sof_ipc_comp_ext_data *)
 		   ((uint8_t *)comp + comp->hdr.size -
 		    comp->ext_data_length);
 
