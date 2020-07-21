@@ -290,8 +290,8 @@ struct sof_ipc_pipe_comp_connect {
 	uint32_t sink_id;
 } __attribute__((packed));
 
-/* extended data struct for component new */
-struct sof_ipc_comp_new_ext {
+/* extended data struct for UUID components */
+struct sof_ipc_comp_ext_data {
 	uint8_t uuid[SOF_UUID_SIZE];
 } __attribute__((packed));
 
