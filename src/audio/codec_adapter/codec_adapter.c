@@ -247,7 +247,7 @@ static int codec_adapter_prepare(struct comp_dev *dev)
 	}
 
 	/* Allocate local buffer */
-	buff_size = MAX(cd->period_bytes, codec->cpd.in_buff_size) * buff_periods;
+	buff_size = Z_MAX(cd->period_bytes, codec->cpd.in_buff_size) * buff_periods;
 	if (cd->local_buff) {
 		ret = buffer_set_size(cd->local_buff, buff_size);
 		if (ret < 0) {
@@ -301,7 +301,7 @@ codec_adapter_copy_from_source_to_lib(const struct audio_stream *source,
 				      size_t bytes)
 {
 	/* head_size - available data until end of local buffer */
-	uint32_t head_size = MIN(bytes, audio_stream_bytes_without_wrap(source,
+	uint32_t head_size = Z_MIN(bytes, audio_stream_bytes_without_wrap(source,
 				 source->r_ptr));
 	/* tail_size - residue data to be copied starting from the beginning
 	 * of the buffer
@@ -323,7 +323,7 @@ codec_adapter_copy_from_lib_to_sink(const struct codec_processing_data *cpd,
 				    size_t bytes)
 {
 	/* head_size - free space until end of local buffer */
-	uint32_t head_size = MIN(bytes, audio_stream_bytes_without_wrap(sink,
+	uint32_t head_size = Z_MIN(bytes, audio_stream_bytes_without_wrap(sink,
 				 sink->w_ptr));
 	/* tail_size - rest of the bytes that needs to be written
 	 * starting from the beginning of the buffer
@@ -356,7 +356,7 @@ static void generate_zeroes(struct comp_buffer *sink, uint32_t bytes)
 		ptr = audio_stream_wrap(&sink->stream, sink->stream.w_ptr);
 		tmp = audio_stream_bytes_without_wrap(&sink->stream,
 						      ptr);
-		tmp = MIN(tmp, copy_bytes);
+		tmp = Z_MIN(tmp, copy_bytes);
 		ptr = (char *)ptr + tmp;
 		copy_bytes -= tmp;
 	}
