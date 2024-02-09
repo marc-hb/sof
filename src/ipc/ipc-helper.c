@@ -36,13 +36,28 @@
 
 LOG_MODULE_DECLARE(ipc, CONFIG_SOF_LOG_LEVEL);
 
+static bool valid_ipc_buffer_desc(const struct sof_ipc_buffer *desc)
+{
+	if (desc->flags >= SOF_MEM_CAPS_MAX_BIT)
+		return false;
+
+	/* FIXME: check desc->size and maybe other things */
+	return true;
+}
+
 /* create a new component in the pipeline */
 struct comp_buffer *buffer_new(const struct sof_ipc_buffer *desc, bool is_shared)
 {
 	struct comp_buffer *buffer;
 
-	tr_info(&buffer_tr, "buffer new size 0x%x id %d.%d flags 0x%x",
-		desc->size, desc->comp.pipeline_id, desc->comp.id, desc->flags);
+	if (valid_ipc_buffer_desc(desc)) {
+		tr_info(&buffer_tr, "buffer new size 0x%x id %d.%d flags 0x%x",
+			desc->size, desc->comp.pipeline_id, desc->comp.id, desc->flags);
+	} else {
+		tr_err(&buffer_tr, "Invalid buffer desc! New size 0x%x id %d.%d flags 0x%x",
+		       desc->size, desc->comp.pipeline_id, desc->comp.id, desc->flags);
+		return NULL;
+	}
 
 	/* allocate buffer */
 	buffer = buffer_alloc(desc->size, desc->caps, desc->flags, PLATFORM_DCACHE_ALIGN,

@@ -87,6 +87,12 @@ struct sof_ipc_comp {
 #define SOF_MEM_CAPS_EXEC		BIT(7) /**< executable */
 #define SOF_MEM_CAPS_L3			BIT(8) /**< L3 memory */
 
+#ifdef CONFIG_L3_HEAD
+#define SOF_MEM_CAPS_MAX_BIT		BIT(8) /**< Used for input validation */
+#else
+#define SOF_MEM_CAPS_MAX_BIT		BIT(9) /**< Used for input validation */
+#endif
+
 /*
  * overrun will cause ring buffer overwrite, instead of XRUN.
  */

@@ -76,6 +76,7 @@ LOG_MODULE_DECLARE(ipc, CONFIG_SOF_LOG_LEVEL);
 #define iGS(x) ((x) & SOF_GLB_TYPE_MASK)
 #define iCS(x) ((x) & SOF_CMD_TYPE_MASK)
 
+/* FIXME: assert() should be turned off in production builds */
 #define _IPC_COPY_CMD(rx, tx, rx_size)					\
 	do {								\
 		int ___ret;						\
